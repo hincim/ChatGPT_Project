@@ -16,7 +16,42 @@ customtkinter.set_appearance_mode("dark")
 customtkinter.set_default_color_theme("dark-blue")
 
 def speak():
-    pass
+    if chat_entry.get():
+        fileName = "api_key"
+
+        try:
+            if os.path.isfile(fileName):
+                input_file = open(fileName,"rb")
+                # file read
+                apiPassword = pickle.load(input_file)
+                my_text.insert(END, "\n\nGPT Working...")
+
+
+                openai.api_key = apiPassword
+                openai.Model.list()
+                answer = openai.Completion.create(
+                    model="text-davinci-002",
+                    prompt=chat_entry.get(),
+                    temperature=0,
+                    # daha spesifik bilgi için arttırılır.
+                    max_tokens=4000,
+                    # bilgi kaç tane kelime ile dönsün
+                    top_p=1.0,
+                    frequency_penalty=0.0,
+                    presence_penalty=0.0
+                )
+                my_text.insert(END, (answer["choices"][0]["text"]).strip())
+                my_text.insert(END, "\n\n")
+            else:
+                input_file = open(fileName,"wb")
+                # file write
+                input_file.close()
+                my_text.insert(END, "\n\n You forgot to buy api key. Please get it from the following page\nhttps://platform.openai.com/account/api-keys")
+        except Exception as e:
+            my_text.insert(END, f"\n\n Error!: {e}")   
+
+    else:
+        my_text.insert(END, "\n\n Hey bro you forgot to ask question")
 
 def clear():
     
