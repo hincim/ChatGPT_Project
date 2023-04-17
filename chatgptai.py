@@ -19,15 +19,43 @@ def speak():
     pass
 
 def clear():
-    pass
+    
+    my_text.delete(1.0, END)
+    chat_entry.delete(0, END)
 
 def key():
+    fileName = "api_key"
+
+    try:
+        if os.path.isfile(fileName):
+            input_file = open(fileName,"rb")
+            # file read
+            apiPassword = pickle.load(input_file)
+            api_entry.insert(END, apiPassword)
+        else:
+            input_file = open(fileName,"wb")
+            # file write
+            input_file.close()
+    except Exception as e:
+        my_text.insert(END, f"\n\n Error!: {e}")
+
     root.geometry("600x600")
     api_frame.pack(pady=10)
 
 
 def save_key():
-    api_frame.pack_forget()
+
+    file_name = "api_key"
+
+    try:
+        output_file = open(file_name,"wb")
+        pickle.dump(api_entry.get(),output_file)
+        api_entry.delete(0, END)
+        api_frame.pack_forget()
+
+    except Exception as e:
+        my_text.insert(END, f"\n\n Error!: {e}")
+
     root.geometry("600x430")
 
 # text frame
